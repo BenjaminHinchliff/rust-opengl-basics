@@ -1,5 +1,5 @@
 [package]
-name = "winit-opengl"
+name = "gl"
 version = "0.1.0"
 authors = ["SuniTheFish <benjamin.hinchliff@gmail.com>"]
 edition = "2018"
@@ -7,8 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-gl_debug = ["gl/debug"]
+debug = []
 
-[dependencies]
-glutin = "0.24.1"
-gl = { path = "local_libs/gl" }
+[build-dependencies]
+gl_generator = { version = "0.14.0" }
