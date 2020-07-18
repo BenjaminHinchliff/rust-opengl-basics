@@ -7,7 +7,10 @@ use crate::resources::{self, Resources};
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("failed to load resource {name}")]
-    ResourceLoad { name: String, inner: resources::Error },
+    ResourceLoad {
+        name: String,
+        inner: resources::Error,
+    },
     #[error("cannot determine shader type for resource {name}")]
     CanNotDetermineShaderTypeForResource { name: String },
     #[error("failed to compile shader {name}: {message}")]
@@ -109,11 +112,12 @@ impl Shader {
             .iter()
             .find(|&&(file_extension, _)| name.ends_with(file_extension))
             .map(|&(_, kind)| kind)
-            .ok_or_else(|| Error::CanNotDetermineShaderTypeForResource {name: name.into()})?;
+            .ok_or_else(|| Error::CanNotDetermineShaderTypeForResource { name: name.into() })?;
 
-        let source = res
-            .load_cstring(name)
-            .map_err(|e| Error::ResourceLoad { name: name.into(), inner: e })?;
+        let source = res.load_cstring(name).map_err(|e| Error::ResourceLoad {
+            name: name.into(),
+            inner: e,
+        })?;
 
         Shader::from_source(gl, &source, shader_kind).map_err(|message| Error::CompileError {
             name: name.into(),

@@ -8,9 +8,14 @@ fn main() {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
 
-    let executable_path = find_parent_target_dir(&out_dir).expect("failed to find target dir").join(env::var("PROFILE").unwrap());
+    let executable_path = find_parent_target_dir(&out_dir)
+        .expect("failed to find target dir")
+        .join(env::var("PROFILE").unwrap());
 
-    recursive_copy(&manifest_dir.join("assets"), &executable_path.join("assets"));
+    recursive_copy(
+        &manifest_dir.join("assets"),
+        &executable_path.join("assets"),
+    );
 }
 
 // find the parent directory that is called target to copy files to
@@ -39,7 +44,8 @@ fn recursive_copy(from: &Path, to: &Path) {
             if entry.file_type().is_dir() {
                 fs::DirBuilder::new()
                     .recursive(true)
-                    .create(target_path).expect("failed to create target dir");
+                    .create(target_path)
+                    .expect("failed to create target dir");
             } else {
                 fs::copy(entry.path(), &target_path).expect("failed to copy");
             }

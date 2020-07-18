@@ -10,6 +10,23 @@ impl vec3 {
     pub fn new(x: f32, y: f32, z: f32) -> vec3 {
         vec3 { x, y, z }
     }
+
+    pub unsafe fn vertex_attrib_pointer(
+        gl: &gl::Gl,
+        stride: usize,
+        location: usize,
+        offset: usize,
+    ) {
+        gl.EnableVertexAttribArray(location as gl::types::GLuint);
+        gl.VertexAttribPointer(
+            location as gl::types::GLuint,
+            3,
+            gl::FLOAT,
+            gl::FALSE,
+            stride as gl::types::GLint,
+            offset as *const gl::types::GLvoid,
+        );
+    }
 }
 
 impl From<(f32, f32, f32)> for vec3 {
