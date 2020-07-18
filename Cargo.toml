@@ -12,6 +12,7 @@ gl_debug = ["gl/debug"]
 [dependencies]
 glutin = "0.24.1"
 gl = { path = "local_libs/gl" }
+thiserror = "1.0.20"
 
 [build-dependencies]
 walkdir = "2.3.1"

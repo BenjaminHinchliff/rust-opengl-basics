@@ -3,10 +3,15 @@ use std::fs;
 use std::io::{self, Read};
 use std::path::{Path, PathBuf};
 
-#[derive(Debug)]
+use thiserror::Error;
+
+#[derive(Error, Debug)]
 pub enum Error {
+    #[error("failed to get executable path")]
     FailedToGetExePath,
+    #[error("I/O error")]
     Io(io::Error),
+    #[error("failed to read CString from file that contains 0")]
     FileContainsNil,
 }
 
