@@ -38,13 +38,13 @@ impl Drop for VertexArray {
 }
 
 pub type ArrayBuffer = Buffer<BufferTypeArray>;
-pub type ElementArrayBuffer = Buffer<BufferTypeElementArray>;
-
 pub struct BufferTypeArray;
 impl BufferType for BufferTypeArray {
     const BUFFER_TYPE: gl::types::GLuint = gl::ARRAY_BUFFER;
 }
 
+#[allow(dead_code)]
+pub type ElementArrayBuffer = Buffer<BufferTypeElementArray>;
 pub struct BufferTypeElementArray;
 impl BufferType for BufferTypeElementArray {
     const BUFFER_TYPE: gl::types::GLuint = gl::ELEMENT_ARRAY_BUFFER;
