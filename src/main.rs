@@ -1,4 +1,4 @@
-use std::ffi::CString;
+use std::path::Path;
 
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::{ControlFlow, EventLoop};
@@ -10,12 +10,15 @@ use glutin::GlRequest;
 
 mod gl_render;
 use gl_render::Program;
-use gl_render::Shader;
+mod resources;
+use resources::Resources;
 
 const WIDTH: i32 = 800;
 const HEIGHT: i32 = 600;
 
 fn main() {
+    // create resource loader
+    let res = Resources::from_relative_exe_path(Path::new("assets")).unwrap();
     // create event loop
     let el = EventLoop::new();
     // create window builder
@@ -34,16 +37,8 @@ fn main() {
     // load gl functions
     let gl = gl::Gl::load_with(|symbol| gl_window.get_proc_address(symbol));
 
-    // load shaders
-    let vert_shader =
-        Shader::from_vert_source(&gl, &CString::new(include_str!("triangle.vert")).unwrap())
-            .unwrap();
-    let frag_shader =
-        Shader::from_frag_source(&gl, &CString::new(include_str!("triangle.frag")).unwrap())
-            .unwrap();
-
     // create shader program
-    let shader_program = Program::from_shaders(&gl, &[vert_shader, frag_shader]).unwrap();
+    let shader_program = Program::from_res(&gl, &res, "shaders/triangle").unwrap();
 
     unsafe {
         // set viewport size
