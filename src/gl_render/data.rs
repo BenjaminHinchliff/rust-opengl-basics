@@ -1,5 +1,3 @@
-
-
 #[derive(Copy, Clone, Debug)]
 #[repr(C, packed)]
 pub struct U2U10U10U10RevFloat {
@@ -7,7 +5,12 @@ pub struct U2U10U10U10RevFloat {
 }
 
 impl U2U10U10U10RevFloat {
-    pub unsafe fn vertex_attrib_pointer(gl: &gl::Gl, stride: usize, location: usize, offset: usize) {
+    pub unsafe fn vertex_attrib_pointer(
+        gl: &gl::Gl,
+        stride: usize,
+        location: usize,
+        offset: usize,
+    ) {
         gl.EnableVertexAttribArray(location as gl::types::GLuint);
         gl.VertexAttribPointer(
             location as gl::types::GLuint,
@@ -22,7 +25,9 @@ impl U2U10U10U10RevFloat {
 
 impl From<(f32, f32, f32, f32)> for U2U10U10U10RevFloat {
     fn from((x, y, z, w): (f32, f32, f32, f32)) -> Self {
-        U2U10U10U10RevFloat { inner: vec_2_10_10_10::Vector::new(x, y, z, w) }
+        U2U10U10U10RevFloat {
+            inner: vec_2_10_10_10::Vector::new(x, y, z, w),
+        }
     }
 }
 

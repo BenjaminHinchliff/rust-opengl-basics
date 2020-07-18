@@ -11,6 +11,7 @@ use glutin::GlRequest;
 use render_gl_derive::VertexAttribPointers;
 
 mod gl_render;
+use gl_render::buffer;
 use gl_render::data;
 use gl_render::Program;
 mod resources;
@@ -78,21 +79,10 @@ fn main() {
         Vertex::new((0.0, 0.5, 0.0), (0.0, 0.0, 1.0, 1.0)),   // top
     ];
 
-    let mut vbo: gl::types::GLuint = 0;
-    unsafe {
-        gl.GenBuffers(1, &mut vbo);
-    }
-
-    unsafe {
-        gl.BindBuffer(gl::ARRAY_BUFFER, vbo);
-        gl.BufferData(
-            gl::ARRAY_BUFFER,
-            (vertices.len() * std::mem::size_of::<Vertex>()) as gl::types::GLsizeiptr,
-            vertices.as_ptr() as *const gl::types::GLvoid,
-            gl::STATIC_DRAW,
-        );
-        gl.BindBuffer(gl::ARRAY_BUFFER, 0);
-    }
+    let vbo = buffer::ArrayBuffer::new(&gl);
+    vbo.bind();
+    vbo.static_draw_data(&vertices);
+    vbo.unbind();
 
     let mut vao: gl::types::GLuint = 0;
     unsafe {
@@ -101,9 +91,9 @@ fn main() {
 
     unsafe {
         gl.BindVertexArray(vao);
-        gl.BindBuffer(gl::ARRAY_BUFFER, vbo);
+        vbo.bind();
         Vertex::vertex_attrib_pointers(&gl);
-        gl.BindBuffer(gl::ARRAY_BUFFER, 0);
+        vbo.unbind();
         gl.BindVertexArray(0);
     }
 
