@@ -84,18 +84,13 @@ fn main() {
     vbo.static_draw_data(&vertices);
     vbo.unbind();
 
-    let mut vao: gl::types::GLuint = 0;
-    unsafe {
-        gl.GenVertexArrays(1, &mut vao);
-    }
-
-    unsafe {
-        gl.BindVertexArray(vao);
-        vbo.bind();
-        Vertex::vertex_attrib_pointers(&gl);
-        vbo.unbind();
-        gl.BindVertexArray(0);
-    }
+    let vao = buffer::VertexArray::new(&gl);
+    
+    vao.bind();
+    vbo.bind();
+    Vertex::vertex_attrib_pointers(&gl);
+    vbo.unbind();
+    vao.unbind();
 
     el.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
@@ -108,9 +103,10 @@ fn main() {
             _ => (),
         }
 
+        shader_program.set_used();
+        vao.bind();
         unsafe {
             gl.Clear(gl::COLOR_BUFFER_BIT);
-            gl.BindVertexArray(vao);
             gl.DrawArrays(gl::TRIANGLES, 0, 3);
         }
 

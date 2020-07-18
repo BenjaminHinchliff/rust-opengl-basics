@@ -1,3 +1,42 @@
+pub struct VertexArray {
+    gl: gl::Gl,
+    vao: gl::types::GLuint,
+}
+
+impl VertexArray {
+    pub fn new(gl: &gl::Gl) -> VertexArray {
+        let mut vao: gl::types::GLuint = 0;
+        unsafe {
+            gl.GenVertexArrays(1, &mut vao);
+        }
+
+        VertexArray {
+            gl: gl.clone(),
+            vao,
+        }
+    }
+
+    pub fn bind(&self) {
+        unsafe {
+            self.gl.BindVertexArray(self.vao);
+        }
+    }
+
+    pub fn unbind(&self) {
+        unsafe {
+            self.gl.BindVertexArray(0);
+        }
+    }
+}
+
+impl Drop for VertexArray {
+    fn drop(&mut self) {
+        unsafe {
+            self.gl.DeleteVertexArrays(1, &mut self.vao);
+        }
+    }
+}
+
 pub struct ArrayBuffer {
     gl: gl::Gl,
     vbo: gl::types::GLuint,
