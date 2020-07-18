@@ -25,11 +25,11 @@ pub struct Vertex {
     #[location = 0]
     pos: data::vec3,
     #[location = 1]
-    color: data::vec3,
+    color: data::U2U10U10U10RevFloat,
 }
 
 impl Vertex {
-    pub fn new(pos: (f32, f32, f32), color: (f32, f32, f32)) -> Self {
+    pub fn new(pos: (f32, f32, f32), color: (f32, f32, f32, f32)) -> Self {
         Vertex {
             pos: pos.into(),
             color: color.into(),
@@ -73,9 +73,9 @@ fn main() {
 
     // vertex data
     let vertices: Vec<Vertex> = vec![
-        Vertex::new((-0.5, -0.5, 0.0), (1.0, 0.0, 0.0)), // bottom right
-        Vertex::new((0.5, -0.5, 0.0), (0.0, 1.0, 0.0)),  // bottom left
-        Vertex::new((0.0, 0.5, 0.0), (0.0, 0.0, 1.0)),   // top
+        Vertex::new((-0.5, -0.5, 0.0), (1.0, 0.0, 0.0, 1.0)), // bottom right
+        Vertex::new((0.5, -0.5, 0.0), (0.0, 1.0, 0.0, 1.0)),  // bottom left
+        Vertex::new((0.0, 0.5, 0.0), (0.0, 0.0, 1.0, 1.0)),   // top
     ];
 
     let mut vbo: gl::types::GLuint = 0;
