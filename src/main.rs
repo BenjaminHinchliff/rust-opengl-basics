@@ -8,35 +8,14 @@ use glutin::ContextBuilder;
 use glutin::GlProfile;
 use glutin::GlRequest;
 
-use render_gl_derive::VertexAttribPointers;
-
 mod gl_render;
 use gl_render::buffer;
-use gl_render::data;
-use gl_render::Program;
 mod resources;
 use resources::Resources;
+mod triangle;
 
 const WIDTH: i32 = 800;
 const HEIGHT: i32 = 600;
-
-#[derive(Copy, Clone, Debug, VertexAttribPointers)]
-#[repr(C, packed)]
-pub struct Vertex {
-    #[location = 0]
-    pos: data::vec3,
-    #[location = 1]
-    color: data::U2U10U10U10RevFloat,
-}
-
-impl Vertex {
-    pub fn new(pos: (f32, f32, f32), color: (f32, f32, f32, f32)) -> Self {
-        Vertex {
-            pos: pos.into(),
-            color: color.into(),
-        }
-    }
-}
 
 fn main() {
     // create resource loader
@@ -59,9 +38,6 @@ fn main() {
     // load gl functions
     let gl = gl::Gl::load_with(|symbol| gl_window.get_proc_address(symbol));
 
-    // create shader program
-    let shader_program = Program::from_res(&gl, &res, "shaders/triangle").unwrap();
-
     unsafe {
         // set viewport size
         gl.Viewport(0, 0, WIDTH, HEIGHT);
@@ -69,28 +45,7 @@ fn main() {
         gl.ClearColor(1.0, 0.55, 0.0, 1.0);
     }
 
-    // use program
-    shader_program.set_used();
-
-    // vertex data
-    let vertices: Vec<Vertex> = vec![
-        Vertex::new((-0.5, -0.5, 0.0), (1.0, 0.0, 0.0, 1.0)), // bottom right
-        Vertex::new((0.5, -0.5, 0.0), (0.0, 1.0, 0.0, 1.0)),  // bottom left
-        Vertex::new((0.0, 0.5, 0.0), (0.0, 0.0, 1.0, 1.0)),   // top
-    ];
-
-    let vbo = buffer::ArrayBuffer::new(&gl);
-    vbo.bind();
-    vbo.static_draw_data(&vertices);
-    vbo.unbind();
-
-    let vao = buffer::VertexArray::new(&gl);
-    
-    vao.bind();
-    vbo.bind();
-    Vertex::vertex_attrib_pointers(&gl);
-    vbo.unbind();
-    vao.unbind();
+    let triangle = triangle::Triangle::new(&res, &gl).unwrap();
 
     el.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
@@ -103,12 +58,10 @@ fn main() {
             _ => (),
         }
 
-        shader_program.set_used();
-        vao.bind();
         unsafe {
             gl.Clear(gl::COLOR_BUFFER_BIT);
-            gl.DrawArrays(gl::TRIANGLES, 0, 3);
         }
+        triangle.render(&gl);
 
         gl_window.swap_buffers().unwrap();
     });

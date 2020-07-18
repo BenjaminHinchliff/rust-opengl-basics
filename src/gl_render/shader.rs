@@ -88,6 +88,12 @@ impl Program {
             self.gl.UseProgram(self.id);
         }
     }
+
+    pub fn set_unused(&self) {
+        unsafe {
+            self.gl.UseProgram(0);
+        }
+    }
 }
 
 impl Drop for Program {

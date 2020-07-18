@@ -14,6 +14,7 @@ glutin = "0.24.1"
 gl = { path = "local_libs/gl" }
 render-gl-derive = { path = "render-gl-derive" }
 thiserror = "1.0.20"
+anyhow = "1.0.31"
 vec-2-10-10-10 = "0.1.2"
 
 [build-dependencies]
