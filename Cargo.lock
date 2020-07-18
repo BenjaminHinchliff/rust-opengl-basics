@@ -699,6 +699,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "41cc0f7e4d5d4544e8861606a285bb08d3e70712ccc7d2b84d7c0ccfaf4b05ce"
 
 [[package]]
+name = "render_gl_derive"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2 1.0.18",
+ "quote 1.0.7",
+ "syn",
+]
+
+[[package]]
 name = "rusttype"
 version = "0.7.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -995,6 +1004,7 @@ version = "0.1.0"
 dependencies = [
  "gl",
  "glutin",
+ "render_gl_derive",
  "thiserror",
  "walkdir",
 ]

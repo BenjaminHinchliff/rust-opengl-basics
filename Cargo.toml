@@ -12,6 +12,7 @@ gl_debug = ["gl/debug"]
 [dependencies]
 glutin = "0.24.1"
 gl = { path = "local_libs/gl" }
+render_gl_derive = { path = "render_gl_derive" }
 thiserror = "1.0.20"
 
 [build-dependencies]

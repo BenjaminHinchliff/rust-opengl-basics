@@ -8,6 +8,8 @@ use glutin::ContextBuilder;
 use glutin::GlProfile;
 use glutin::GlRequest;
 
+use render_gl_derive::VertexAttribPointers;
+
 mod gl_render;
 use gl_render::data;
 use gl_render::Program;
@@ -17,10 +19,12 @@ use resources::Resources;
 const WIDTH: i32 = 800;
 const HEIGHT: i32 = 600;
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, VertexAttribPointers)]
 #[repr(C, packed)]
 pub struct Vertex {
+    #[location = 0]
     pos: data::vec3,
+    #[location = 1]
     color: data::vec3,
 }
 
@@ -29,15 +33,6 @@ impl Vertex {
         Vertex {
             pos: pos.into(),
             color: color.into(),
-        }
-    }
-
-    pub fn vertex_attrib_pointers(gl: &gl::Gl) {
-        let stride = std::mem::size_of::<Self>();
-
-        unsafe {
-            data::vec3::vertex_attrib_pointer(gl, stride, 0, 0);
-            data::vec3::vertex_attrib_pointer(gl, stride, 1, std::mem::size_of::<data::vec3>());
         }
     }
 }
