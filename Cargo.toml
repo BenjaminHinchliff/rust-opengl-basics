@@ -17,6 +17,7 @@ thiserror = "1.0.20"
 anyhow = "1.0.31"
 vec-2-10-10-10 = "0.1.2"
 nalgebra = "0.21.1"
+image = "0.23.7"
 
 [build-dependencies]
 walkdir = "2.3.1"

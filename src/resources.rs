@@ -5,12 +5,16 @@ use std::path::{Path, PathBuf};
 
 use thiserror::Error;
 
+use image::DynamicImage;
+
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("failed to get executable path")]
     FailedToGetExePath,
     #[error("I/O error")]
     Io(io::Error),
+    #[error("Image load error")]
+    Image(image::ImageError),
     #[error("failed to read CString from file that contains 0")]
     FileContainsNil,
 }
@@ -18,6 +22,12 @@ pub enum Error {
 impl From<io::Error> for Error {
     fn from(other: io::Error) -> Self {
         Error::Io(other)
+    }
+}
+
+impl From<image::ImageError> for Error {
+    fn from(other: image::ImageError) -> Self {
+        Error::Image(other)
     }
 }
 
@@ -35,6 +45,7 @@ impl Resources {
     }
 
     pub fn load_cstring(&self, resource_name: &str) -> Result<ffi::CString, Error> {
+        let resource_name = resource_name_to_path(&self.root_path, resource_name);
         let mut file = fs::File::open(self.root_path.join(resource_name))?;
         let mut buffer: Vec<u8> = Vec::with_capacity(file.metadata()?.len() as usize + 1);
         file.read_to_end(&mut buffer)?;
@@ -44,10 +55,14 @@ impl Resources {
 
         Ok(unsafe { ffi::CString::from_vec_unchecked(buffer) })
     }
+
+    pub fn load_image(&self, resource_name: &str) -> Result<DynamicImage, Error> {
+        let resource_name = resource_name_to_path(&self.root_path, resource_name);
+        Ok(image::open(self.root_path.join(resource_name))?)
+    }
 }
 
-// TO FIX!!!
-fn _resource_name_to_path(root_dir: &Path, location: &str) -> PathBuf {
+fn resource_name_to_path(root_dir: &Path, location: &str) -> PathBuf {
     let mut path: PathBuf = root_dir.into();
 
     for part in location.split("/") {

@@ -5,7 +5,6 @@ pub struct Viewport {
     pub h: i32,
 }
 
-
 impl Viewport {
     pub fn for_window(w: i32, h: i32) -> Viewport {
         Viewport { x: 0, y: 0, w, h }

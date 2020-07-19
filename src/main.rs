@@ -1,5 +1,6 @@
 use std::path::Path;
 
+use glutin::dpi;
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::{ControlFlow, EventLoop};
 use glutin::window::WindowBuilder;
@@ -7,17 +8,16 @@ use glutin::Api;
 use glutin::ContextBuilder;
 use glutin::GlProfile;
 use glutin::GlRequest;
-use glutin::dpi;
 
 use nalgebra as na;
 
 mod gl_render;
 use gl_render::buffer;
-use gl_render::Viewport;
 use gl_render::color_buffer::ColorBuffer;
+use gl_render::Viewport;
 mod resources;
 use resources::Resources;
-mod triangle;
+mod square;
 
 const WIDTH: i32 = 800;
 const HEIGHT: i32 = 600;
@@ -45,11 +45,11 @@ fn main() {
 
     let mut viewport = Viewport::for_window(WIDTH, HEIGHT);
     viewport.set_used(&gl);
-    
+
     let color_buffer = ColorBuffer::from_color(na::Vector3::new(0.3, 0.3, 0.5));
     color_buffer.set_used(&gl);
 
-    let triangle = triangle::Triangle::new(&res, &gl).unwrap();
+    let triangle = square::Square::new(&res, &gl).unwrap();
 
     el.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
