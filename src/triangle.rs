@@ -1,4 +1,4 @@
-use render_gl_derive::VertexAttribPointers;
+use gl_render_derive::VertexAttribPointers;
 use anyhow::Result;
 
 use crate::gl_render::{self, data, Program};
