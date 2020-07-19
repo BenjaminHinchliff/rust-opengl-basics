@@ -23,11 +23,11 @@ impl Texture {
             image::DynamicImage::ImageRgb8(mut img) => {
                 imops::flip_vertical_in_place(&mut img);
                 (img.width(), img.height(), img.into_vec(), gl::RGB)
-            },
+            }
             image::DynamicImage::ImageRgba8(mut img) => {
                 imops::flip_vertical_in_place(&mut img);
                 (img.width(), img.height(), img.into_vec(), gl::RGBA)
-            },
+            }
             _ => {
                 return Err(Error::ImageLoad {
                     name: name.to_string(),
