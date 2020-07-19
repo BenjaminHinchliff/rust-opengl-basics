@@ -1,5 +1,7 @@
 use thiserror::Error;
 
+use image::imageops as imops;
+
 use crate::resources::{self, Resources};
 
 #[derive(Error, Debug)]
@@ -17,8 +19,15 @@ pub struct Texture {
 
 impl Texture {
     pub fn new(gl: &gl::Gl, res: &Resources, name: &str) -> Result<Texture, Error> {
-        let img = match res.load_image(name)? {
-            image::DynamicImage::ImageRgb8(img) => img,
+        let (width, height, img, format) = match res.load_image(name)? {
+            image::DynamicImage::ImageRgb8(mut img) => {
+                imops::flip_vertical_in_place(&mut img);
+                (img.width(), img.height(), img.into_vec(), gl::RGB)
+            },
+            image::DynamicImage::ImageRgba8(mut img) => {
+                imops::flip_vertical_in_place(&mut img);
+                (img.width(), img.height(), img.into_vec(), gl::RGBA)
+            },
             _ => {
                 return Err(Error::ImageLoad {
                     name: name.to_string(),
@@ -36,20 +45,36 @@ impl Texture {
             // bind
             gl.BindTexture(gl::TEXTURE_2D, id);
             // set wrapping
-            gl.TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::REPEAT as gl::types::GLint);
-            gl.TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::REPEAT as gl::types::GLint);
+            gl.TexParameteri(
+                gl::TEXTURE_2D,
+                gl::TEXTURE_WRAP_S,
+                gl::REPEAT as gl::types::GLint,
+            );
+            gl.TexParameteri(
+                gl::TEXTURE_2D,
+                gl::TEXTURE_WRAP_T,
+                gl::REPEAT as gl::types::GLint,
+            );
             // set filtering
-            gl.TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::LINEAR as gl::types::GLint);
-            gl.TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::LINEAR as gl::types::GLint);
+            gl.TexParameteri(
+                gl::TEXTURE_2D,
+                gl::TEXTURE_MIN_FILTER,
+                gl::LINEAR as gl::types::GLint,
+            );
+            gl.TexParameteri(
+                gl::TEXTURE_2D,
+                gl::TEXTURE_MAG_FILTER,
+                gl::LINEAR as gl::types::GLint,
+            );
             // buffer image
             gl.TexImage2D(
                 gl::TEXTURE_2D,
                 0,
                 gl::RGB as gl::types::GLint,
-                img.width() as gl::types::GLsizei,
-                img.height() as gl::types::GLsizei,
+                width as gl::types::GLsizei,
+                height as gl::types::GLsizei,
                 0,
-                gl::RGB,
+                format,
                 gl::UNSIGNED_BYTE,
                 img.as_ptr() as *const gl::types::GLvoid,
             );

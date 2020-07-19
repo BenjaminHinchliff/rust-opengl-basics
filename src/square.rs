@@ -51,7 +51,7 @@ impl Square {
         let indices: Vec<gl::types::GLuint> = vec![0, 1, 2, 2, 1, 3];
 
         // load texture
-        let tex = texture::Texture::new(gl, res, "textures/container.jpg")?;
+        let tex = texture::Texture::new(gl, res, "textures/awesomeface.png")?;
 
         let vbo = ArrayBuffer::new(gl);
         vbo.bind();

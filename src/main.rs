@@ -9,7 +9,7 @@ use glutin::ContextBuilder;
 use glutin::GlProfile;
 use glutin::GlRequest;
 
-use nalgebra as na;
+use nalgebra_glm as glm;
 
 mod gl_render;
 use gl_render::buffer;
@@ -46,7 +46,7 @@ fn main() {
     let mut viewport = Viewport::for_window(WIDTH, HEIGHT);
     viewport.set_used(&gl);
 
-    let color_buffer = ColorBuffer::from_color(na::Vector3::new(0.3, 0.3, 0.5));
+    let color_buffer = ColorBuffer::from_color(glm::Vec3::new(0.3, 0.3, 0.5));
     color_buffer.set_used(&gl);
 
     let triangle = square::Square::new(&res, &gl).unwrap();
