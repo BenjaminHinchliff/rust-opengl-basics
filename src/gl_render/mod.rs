@@ -7,3 +7,5 @@ pub mod data;
 
 mod viewport;
 pub use self::viewport::Viewport;
+
+pub mod color_buffer;

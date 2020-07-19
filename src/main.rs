@@ -9,9 +9,12 @@ use glutin::GlProfile;
 use glutin::GlRequest;
 use glutin::dpi;
 
+use nalgebra as na;
+
 mod gl_render;
 use gl_render::buffer;
 use gl_render::Viewport;
+use gl_render::color_buffer::ColorBuffer;
 mod resources;
 use resources::Resources;
 mod triangle;
@@ -42,12 +45,9 @@ fn main() {
 
     let mut viewport = Viewport::for_window(WIDTH, HEIGHT);
     viewport.set_used(&gl);
-    unsafe {
-        // set viewport size
-        gl.Viewport(0, 0, WIDTH, HEIGHT);
-        // set opengl clear color
-        gl.ClearColor(1.0, 0.55, 0.0, 1.0);
-    }
+    
+    let color_buffer = ColorBuffer::from_color(na::Vector3::new(0.3, 0.3, 0.5));
+    color_buffer.set_used(&gl);
 
     let triangle = triangle::Triangle::new(&res, &gl).unwrap();
 
@@ -69,9 +69,7 @@ fn main() {
             _ => (),
         }
 
-        unsafe {
-            gl.Clear(gl::COLOR_BUFFER_BIT);
-        }
+        color_buffer.clear(&gl);
         triangle.render(&gl);
 
         gl_window.swap_buffers().unwrap();
