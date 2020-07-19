@@ -98,3 +98,11 @@ impl Texture {
         }
     }
 }
+
+impl Drop for Texture {
+    fn drop(&mut self) {
+        unsafe {
+            self.gl.DeleteTextures(1, &self.id);
+        }
+    }
+}
