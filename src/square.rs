@@ -37,7 +37,7 @@ pub struct Square {
 
 impl Square {
     pub fn new(res: &Resources, gl: &gl::Gl) -> Result<Square> {
-        let program = Program::from_res(gl, &res, "shaders/triangle")?;
+        let program = Program::from_res(gl, &res, "shaders/square")?;
 
         // vertex data
         let vertices: Vec<Vertex> = vec![
