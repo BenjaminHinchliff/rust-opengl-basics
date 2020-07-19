@@ -7,9 +7,11 @@ use glutin::Api;
 use glutin::ContextBuilder;
 use glutin::GlProfile;
 use glutin::GlRequest;
+use glutin::dpi;
 
 mod gl_render;
 use gl_render::buffer;
+use gl_render::Viewport;
 mod resources;
 use resources::Resources;
 mod triangle;
@@ -38,6 +40,8 @@ fn main() {
     // load gl functions
     let gl = gl::Gl::load_with(|symbol| gl_window.get_proc_address(symbol));
 
+    let mut viewport = Viewport::for_window(WIDTH, HEIGHT);
+    viewport.set_used(&gl);
     unsafe {
         // set viewport size
         gl.Viewport(0, 0, WIDTH, HEIGHT);
@@ -55,6 +59,13 @@ fn main() {
                 event: WindowEvent::CloseRequested,
                 window_id,
             } if window_id == gl_window.window().id() => *control_flow = ControlFlow::Exit,
+            Event::WindowEvent {
+                event: WindowEvent::Resized(dpi::PhysicalSize { width, height }),
+                window_id,
+            } if window_id == gl_window.window().id() => {
+                viewport.update_size(width as i32, height as i32);
+                viewport.set_used(&gl);
+            }
             _ => (),
         }
 
