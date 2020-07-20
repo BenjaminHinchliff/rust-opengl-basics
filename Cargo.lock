@@ -891,6 +891,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "opengl-globe"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "gl",
+ "gl-render-derive",
+ "glutin",
+ "image",
+ "lazy_static",
+ "nalgebra-glm",
+ "thiserror",
+ "tobj",
+ "vec-2-10-10-10",
+ "walkdir",
+]
+
+[[package]]
 name = "ordered-float"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1470,23 +1487,6 @@ dependencies = [
  "wayland-client",
  "winapi 0.3.9",
  "x11-dl",
-]
-
-[[package]]
-name = "winit-opengl"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "gl",
- "gl-render-derive",
- "glutin",
- "image",
- "lazy_static",
- "nalgebra-glm",
- "thiserror",
- "tobj",
- "vec-2-10-10-10",
- "walkdir",
 ]
 
 [[package]]
