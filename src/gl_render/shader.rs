@@ -109,7 +109,7 @@ impl Program {
         }
     }
 
-    pub fn set_matrix4fv(&self, loc: i32, mat: &glm::Mat4) {
+    pub fn set_matrix4fv(&self, loc: gl::types::GLint, mat: &glm::Mat4) {
         unsafe {
             self.gl
                 .UniformMatrix4fv(loc, 1, gl::FALSE, glm::value_ptr(&mat).as_ptr());
@@ -119,6 +119,16 @@ impl Program {
     #[allow(dead_code)]
     pub fn get_and_set_matrix4fv(&self, name: &str, mat: &glm::Mat4) {
         self.set_matrix4fv(self.get_uniform_location(name), mat);
+    }
+
+    pub fn set_1i(&self, loc: gl::types::GLint, int: gl::types::GLint) {
+        unsafe {
+            self.gl.Uniform1i(loc, int);
+        }
+    }
+
+    pub fn get_and_set_1i(&self, name: &str, int: gl::types::GLint) {
+        self.set_1i(self.get_uniform_location(name), int);
     }
 }
 

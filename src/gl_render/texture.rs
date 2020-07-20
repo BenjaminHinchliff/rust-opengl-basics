@@ -1,8 +1,13 @@
+use std::sync::Mutex;
+
 use thiserror::Error;
 
 use image::imageops as imops;
 
+use lazy_static::lazy_static;
+
 use crate::resources::{self, Resources};
+use crate::gl_render::Program;
 
 #[derive(Error, Debug)]
 pub enum Error {
@@ -12,13 +17,18 @@ pub enum Error {
     Resource(#[from] resources::Error),
 }
 
+lazy_static! {
+    static ref ACTIVE_TEXTURE: Mutex<gl::types::GLuint> = Mutex::new(0);
+}
+
 pub struct Texture {
+    active_id: gl::types::GLuint,
     id: gl::types::GLuint,
     gl: gl::Gl,
 }
 
 impl Texture {
-    pub fn new(gl: &gl::Gl, res: &Resources, name: &str) -> Result<Texture, Error> {
+    pub fn new(gl: &gl::Gl, res: &Resources, name: &str, program: &Program, uniform: &str) -> Result<Texture, Error> {
         let (width, height, img, format) = match res.load_image(name)? {
             image::DynamicImage::ImageRgb8(mut img) => {
                 imops::flip_vertical_in_place(&mut img);
@@ -41,8 +51,14 @@ impl Texture {
             gl.GenTextures(1, &mut id);
         }
 
+        let mut active_tex_lock = ACTIVE_TEXTURE.lock().unwrap();
+        let active_id = *active_tex_lock;
+        *active_tex_lock += 1;
+
         unsafe {
             // bind
+            gl.ActiveTexture(gl::TEXTURE0 + active_id);
+            program.get_and_set_1i(uniform, active_id as i32);
             gl.BindTexture(gl::TEXTURE_2D, id);
             // set wrapping
             gl.TexParameteri(
@@ -83,11 +99,12 @@ impl Texture {
             gl.BindTexture(gl::TEXTURE_2D, 0);
         }
 
-        Ok(Texture { id, gl: gl.clone() })
+        Ok(Texture { active_id, id, gl: gl.clone() })
     }
 
     pub fn bind(&self) {
         unsafe {
+            self.gl.ActiveTexture(gl::TEXTURE0 + self.active_id);
             self.gl.BindTexture(gl::TEXTURE_2D, self.id);
         }
     }

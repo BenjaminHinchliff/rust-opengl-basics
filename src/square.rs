@@ -32,7 +32,8 @@ pub struct Square {
     _vbo: ArrayBuffer,
     ebo: ElementArrayBuffer,
     vao: VertexArray,
-    tex: texture::Texture,
+    container_tex: texture::Texture,
+    face_tex: texture::Texture,
 }
 
 impl Square {
@@ -51,7 +52,10 @@ impl Square {
         let indices: Vec<gl::types::GLuint> = vec![0, 1, 2, 2, 1, 3];
 
         // load texture
-        let tex = texture::Texture::new(gl, res, "textures/container.jpg")?;
+        program.set_used();
+        let container_tex = texture::Texture::new(gl, res, "textures/container.jpg", &program, "container")?;
+        let face_tex = texture::Texture::new(gl, res, "textures/awesomeface.png", &program, "face")?;
+        program.set_unused();
 
         let vbo = ArrayBuffer::new(gl);
         vbo.bind();
@@ -76,7 +80,8 @@ impl Square {
             _vbo: vbo,
             ebo,
             vao,
-            tex,
+            container_tex,
+            face_tex,
         })
     }
 
@@ -84,7 +89,8 @@ impl Square {
         self.program.set_used();
         self.vao.bind();
         self.ebo.bind();
-        self.tex.bind();
+        self.container_tex.bind();
+        self.face_tex.bind();
 
         unsafe {
             gl.DrawElements(
@@ -95,7 +101,8 @@ impl Square {
             );
         }
 
-        self.tex.unbind();
+        self.face_tex.unbind();
+        self.container_tex.unbind();
         self.ebo.unbind();
         self.vao.unbind();
         self.program.set_unused();
