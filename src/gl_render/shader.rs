@@ -2,6 +2,8 @@ use std::ffi::{CStr, CString};
 
 use thiserror::Error;
 
+use nalgebra_glm as glm;
+
 use crate::resources::{self, Resources};
 
 #[derive(Error, Debug)]
@@ -93,6 +95,30 @@ impl Program {
         unsafe {
             self.gl.UseProgram(0);
         }
+    }
+
+    #[allow(dead_code)]
+    pub fn id(&self) -> u32 {
+        self.id
+    }
+
+    pub fn get_uniform_location(&self, name: &str) -> gl::types::GLint {
+        unsafe {
+            self.gl
+                .GetUniformLocation(self.id, CString::new(name).unwrap().as_ptr())
+        }
+    }
+
+    pub fn set_matrix4fv(&self, loc: i32, mat: &glm::Mat4) {
+        unsafe {
+            self.gl
+                .UniformMatrix4fv(loc, 1, gl::FALSE, glm::value_ptr(&mat).as_ptr());
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn get_and_set_matrix4fv(&self, name: &str, mat: &glm::Mat4) {
+        self.set_matrix4fv(self.get_uniform_location(name), mat);
     }
 }
 

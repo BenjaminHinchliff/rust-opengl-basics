@@ -14,6 +14,7 @@ use nalgebra_glm as glm;
 mod gl_render;
 use gl_render::buffer;
 use gl_render::color_buffer::ColorBuffer;
+use gl_render::Transform;
 use gl_render::Viewport;
 mod resources;
 use resources::Resources;
@@ -49,7 +50,27 @@ fn main() {
     let color_buffer = ColorBuffer::from_color(glm::Vec3::new(0.3, 0.3, 0.5));
     color_buffer.set_used(&gl);
 
-    let triangle = square::Square::new(&res, &gl).unwrap();
+    let square = square::Square::new(&res, &gl).unwrap();
+
+    // create transforms
+    square.program().set_used();
+    let model_matrix = glm::Mat4::identity();
+    let model_matrix = glm::rotate(
+        &model_matrix,
+        -55f32.to_radians(),
+        &glm::vec3(1.0, 0.0, 0.0),
+    );
+    let model = Transform::new(&square.program(), "model");
+    model.set_matrix(&model_matrix);
+    let view_matrix = glm::Mat4::identity();
+    let view_matrix = glm::translate(&view_matrix, &glm::vec3(0.0, 0.0, -3.0));
+    let view = Transform::new(&square.program(), "view");
+    view.set_matrix(&view_matrix);
+    let proj_matrix =
+        glm::perspective(45f32.to_radians(), WIDTH as f32 / HEIGHT as f32, 0.1, 100.0);
+    let proj = Transform::new(&square.program(), "projection");
+    proj.set_matrix(&proj_matrix);
+    square.program().set_unused();
 
     el.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
@@ -70,7 +91,7 @@ fn main() {
         }
 
         color_buffer.clear(&gl);
-        triangle.render(&gl);
+        square.render(&gl);
 
         gl_window.swap_buffers().unwrap();
     });

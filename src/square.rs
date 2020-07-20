@@ -51,7 +51,7 @@ impl Square {
         let indices: Vec<gl::types::GLuint> = vec![0, 1, 2, 2, 1, 3];
 
         // load texture
-        let tex = texture::Texture::new(gl, res, "textures/awesomeface.png")?;
+        let tex = texture::Texture::new(gl, res, "textures/container.jpg")?;
 
         let vbo = ArrayBuffer::new(gl);
         vbo.bind();
@@ -99,5 +99,9 @@ impl Square {
         self.ebo.unbind();
         self.vao.unbind();
         self.program.set_unused();
+    }
+
+    pub fn program(&self) -> &Program {
+        &self.program
     }
 }

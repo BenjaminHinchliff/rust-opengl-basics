@@ -9,9 +9,13 @@ out VS_OUTPUT {
     vec2 Texcoord;
 } vs_out;
 
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
 void main()
 {
-    gl_Position = vec4(Position, 1.0);
+    gl_Position = projection * view * model * vec4(Position, 1.0);
     vs_out.Color = Color;
     vs_out.Texcoord = Texcoord;
 }
